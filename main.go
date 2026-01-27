@@ -8,6 +8,9 @@ var r = gin.Default()
 
 func main() {
 
-	orderPost()
+	ordersPost()
+	ordersSSE()
+	ordersGet()
+	robotsPatch()
 
 }

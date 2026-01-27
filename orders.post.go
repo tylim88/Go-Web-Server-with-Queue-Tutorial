@@ -6,21 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type OrderType string
-
-const (
-	VIP     OrderType = "vip"
-	Regular OrderType = "regular"
-)
-
-type orderPostBody struct {
-	Type OrderType `json:"type" binding:"required"`
+type ordersPostBody struct {
+	Type string `json:"type" binding:"required"`
 }
 
-func orderPost() {
+var id_robot_latest = 0
+
+func ordersPost() {
 
 	r.POST("/order", func(c *gin.Context) {
-		var body orderPostBody
+		var body ordersPostBody
 
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(400, gin.H{"error": "Invalid JSON provided!"})
