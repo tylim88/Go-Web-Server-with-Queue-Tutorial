@@ -26,10 +26,9 @@ func ordersPost() {
 			return
 		}
 
-		mu.Lock()
-		defer mu.Unlock()
-
 		func() {
+			mu.Lock()
+			defer mu.Unlock()
 
 			id_robot_latest++
 			newOrder = Pending{
