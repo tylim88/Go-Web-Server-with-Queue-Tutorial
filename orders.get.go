@@ -41,22 +41,22 @@ type OrderGetResponse struct {
 	Completed  []Completed        `json:"completed"`
 }
 
-var pending = struct {
+var pendingMap = struct {
 	Vip     []Pending `json:"vip"`
 	Regular []Pending `json:"regular"`
 }{}
 
-var processing = map[int]Processing{}
+var processingMap = map[int]Processing{}
 
-var completed = []Completed{}
+var completedList = []Completed{}
 
 func ordersGet() {
 
 	r.GET("/orders", func(c *gin.Context) {
 		c.JSON(http.StatusOK, OrderGetResponse{
-			Pending:    pending,
-			Processing: processing,
-			Completed:  completed,
+			Pending:    pendingMap,
+			Processing: processingMap,
+			Completed:  completedList,
 		})
 	})
 }

@@ -37,9 +37,9 @@ func ordersPost() {
 			}
 			switch body.Type {
 			case "vip":
-				pending.Vip = append(pending.Vip, newOrder)
+				pendingMap.Vip = append(pendingMap.Vip, newOrder)
 			case "regular":
-				pending.Regular = append(pending.Regular, newOrder)
+				pendingMap.Regular = append(pendingMap.Regular, newOrder)
 			default:
 				c.JSON(400, gin.H{"error": "Invalid type provided!"})
 				return

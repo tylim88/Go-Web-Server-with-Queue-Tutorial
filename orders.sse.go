@@ -40,15 +40,16 @@ func ordersSSE() {
 		c.Stream(func(w io.Writer) bool {
 
 			select {
-			case pending, ok := <-pendingChan:
+			case pendingItem, ok := <-pendingChan:
 				if ok {
-					c.SSEvent("pending", pending)
+					c.SSEvent("pending", pendingItem)
+
 					return true
 				}
 				return false
-			case processing, ok := <-processingChan:
+			case processingItem, ok := <-processingChan:
 				if ok {
-					c.SSEvent("pending", processing)
+					c.SSEvent("pending", processingItem)
 					return true
 				}
 				return false
@@ -64,5 +65,26 @@ func ordersSSE() {
 
 		})
 	})
+
+}
+
+func enqueue_processing() {
+	if count_robot >= len(processingMap) {
+		return
+	}
+	if len(pendingMap.Regular) == 0 && len(pendingMap.Vip) == 0 {
+		return
+	}
+	var id_robot int
+	for i := 1; i <= count_robot; i++ {
+		if _, ok := processingMap[i]; !ok {
+			id_robot = i
+			break
+		}
+	}
+	go func(){
+		
+	}
+	const time_remaining = 1e4
 
 }
