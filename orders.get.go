@@ -12,13 +12,11 @@ type Orders_Get_Response struct {
 	Completed      []Completed        `json:"completed"`
 }
 
-func orders_Get() {
+func orders_Get(c *gin.Context) {
 
-	r.GET("/orders", func(c *gin.Context) {
-		c.JSON(http.StatusOK, Orders_Get_Response{
-			Pending:        map_pending,
-			Map_processing: map_processing,
-			Completed:      list_completed,
-		})
+	c.JSON(http.StatusOK, Orders_Get_Response{
+		Pending:        map_pending,
+		Map_processing: map_processing,
+		Completed:      list_completed,
 	})
 }

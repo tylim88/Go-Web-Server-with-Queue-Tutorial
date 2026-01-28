@@ -29,45 +29,43 @@ type Order_SSE_Response_Completed struct {
 }
 
 // https://gist.github.com/SubCoder1/3a700149b2e7bb179a9123c6283030ff
-func orders_SSE() {
+func orders_SSE(c *gin.Context) {
 
-	r.GET("/ordersSSE", func(c *gin.Context) {
-		c.Writer.Header().Set("Content-Type", "text/event-stream")
-		c.Writer.Header().Set("Cache-Control", "no-cache")
-		c.Writer.Header().Set("Connection", "keep-alive")
-		c.Writer.Header().Set("Transfer-Encoding", "chunked")
+	c.Writer.Header().Set("Content-Type", "text/event-stream")
+	c.Writer.Header().Set("Cache-Control", "no-cache")
+	c.Writer.Header().Set("Connection", "keep-alive")
+	c.Writer.Header().Set("Transfer-Encoding", "chunked")
 
-		c.Stream(func(w io.Writer) bool {
+	c.Stream(func(w io.Writer) bool {
 
-			select {
-			case pendingItem, ok := <-chan_response_pending:
-				if ok {
-					c.SSEvent("pending", pendingItem)
-					if pendingItem.Action == "add" {
-						enqueue_processing()
-					}
-
-					return true
-				}
-				return false
-			case processingItem, ok := <-chan_response_processing:
-				if ok {
-					c.SSEvent("pending", processingItem)
-					return true
-				}
-				return false
-			case completed, ok := <-chan_response_completed:
-				if ok {
-					c.SSEvent("pending", completed)
+		select {
+		case pendingItem, ok := <-chan_response_pending:
+			if ok {
+				c.SSEvent("pending", pendingItem)
+				if pendingItem.Action == "add" {
 					enqueue_processing()
-					return true
 				}
-				return false
-			case <-c.Request.Context().Done():
-				return false
-			}
 
-		})
+				return true
+			}
+			return false
+		case processingItem, ok := <-chan_response_processing:
+			if ok {
+				c.SSEvent("pending", processingItem)
+				return true
+			}
+			return false
+		case completed, ok := <-chan_response_completed:
+			if ok {
+				c.SSEvent("pending", completed)
+				enqueue_processing()
+				return true
+			}
+			return false
+		case <-c.Request.Context().Done():
+			return false
+		}
+
 	})
 
 }
@@ -147,6 +145,8 @@ func enqueue_processing() {
 				Queue:  "processing",
 				Action: "remove",
 			}
+
+			delete(map_processing, id_robot)
 
 		}
 
