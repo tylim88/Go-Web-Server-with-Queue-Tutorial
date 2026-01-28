@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var m sync.Mutex
+var m2 sync.Mutex
 
 type Order_SSE_Response_Pending struct {
 	Pending_Base
@@ -80,8 +80,8 @@ func enqueue_processing() {
 		return
 	}
 
-	m.Lock()
-	defer m.Unlock()
+	m2.Lock()
+	defer m2.Unlock()
 
 	var id_robot int
 	for i := 1; i <= count_robot; i++ {

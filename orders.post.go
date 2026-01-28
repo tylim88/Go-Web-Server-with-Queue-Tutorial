@@ -12,7 +12,7 @@ type Orders_Post_Body struct {
 	Type string `json:"type" binding:"required"`
 }
 
-var mu sync.Mutex
+var m1 sync.Mutex
 
 func orders_Post() {
 
@@ -26,8 +26,8 @@ func orders_Post() {
 		}
 
 		func() {
-			mu.Lock()
-			defer mu.Unlock()
+			m1.Lock()
+			defer m1.Unlock()
 
 			id_robot_latest++
 			newOrder = Pending_Base{
