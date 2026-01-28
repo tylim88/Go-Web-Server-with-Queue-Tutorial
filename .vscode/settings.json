@@ -20,5 +20,8 @@
 	"[typescriptreact]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"githubPullRequests.ignoredPullRequestBranches": ["main"]
+	"githubPullRequests.ignoredPullRequestBranches": ["main"],
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	}
 }

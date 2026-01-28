@@ -42,6 +42,7 @@ func orders_Post(c *gin.Context) {
 			c.JSON(400, gin.H{"error": "Invalid type provided!"})
 			return
 		}
+		enqueue_processing()
 	}()
 
 	chan_response_pending <- Order_SSE_Response_Pending{

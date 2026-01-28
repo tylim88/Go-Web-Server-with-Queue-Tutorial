@@ -10,10 +10,9 @@ import (
 var r = gin.Default()
 
 func main() {
-	r.POST("/order", orders_Post)
-	r.GET("/orders", orders_Get)
+	r.POST("/orders", orders_Post)
 	r.PATCH("/robots", robots_Patch)
-	r.GET("/ordersSSE", orders_SSE)
+	r.GET("/orders", orders_get)
 
 	r.Run()
 
