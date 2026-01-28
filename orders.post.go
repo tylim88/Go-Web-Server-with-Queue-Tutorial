@@ -42,15 +42,13 @@ func orders_Post(c *gin.Context) {
 			c.JSON(400, gin.H{"error": "Invalid type provided!"})
 			return
 		}
-		enqueue_processing()
+		// enqueue_processing()
 	}()
-
 	chan_response_pending <- Order_SSE_Response_Pending{
 		Pending_Base: newOrder,
 		Type_order:   body.Type,
 		Queue:        "pending",
 		Action:       "add",
 	}
-
 	c.JSON(http.StatusOK, gin.H{})
 }

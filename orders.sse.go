@@ -35,14 +35,11 @@ func orders_SSE(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
 	c.Writer.Header().Set("Cache-Control", "no-cache")
 	c.Writer.Header().Set("Connection", "keep-alive")
-
 	c.Stream(func(w io.Writer) bool {
-
 		select {
 		case pendingItem, ok := <-chan_response_pending:
 			if ok {
 				c.SSEvent("pending", pendingItem)
-
 				return true
 			}
 			return false

@@ -7,11 +7,11 @@ import { client_query } from '@/api'
 import '@mantine/core/styles.css'
 
 createRoot(document.getElementById('root')!).render(
-	<StrictMode>
+	<>
 		<QueryClientProvider client={client_query}>
 			<MantineProvider>
 				<App />
 			</MantineProvider>
 		</QueryClientProvider>
-	</StrictMode>,
+	</>,
 )

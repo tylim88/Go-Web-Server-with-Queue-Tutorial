@@ -8,7 +8,7 @@ import { Container, Flex } from '@mantine/core'
 import { useOrderSSE } from '@/api'
 
 function App() {
-	// useOrderSSE()
+	useOrderSSE()
 
 	return (
 		<Container bg="#ffd580" p="xl">
