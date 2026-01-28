@@ -10,20 +10,22 @@ to run
 npm run dev
 ```
 
-original question: https://github.com/tylim88/se-take-home-assignment
+The original question: https://github.com/tylim88/se-take-home-assignment
 
-my original frontend only solution: https://github.com/feedmepos/se-take-home-assignment/pull/69
+My original frontend only solution: https://github.com/feedmepos/se-take-home-assignment/pull/69
 
-This repository is part of my journey in learning Go
+This repository is part of my journey in learning Go.
 
-The original question ask for frontend OR backend solution, this repository provides frontend AND backend solution
+The original question asked for a frontend OR backend solution; this repository provides both a frontend AND backend solution.
 
-I also simplify the question, ignoring all the side requirements(scripts and tests), focusing only the main requirements
+I also simplified the question, ignoring all the side requirements (scripts and tests) and focusing only on the main requirements.
 
-frontend is written in ReactJS and backend is written in Go
+The frontend is written in ReactJS and the backend is written in Go.
 
-Real time update is enabled by using server side event, so no polling is needed on front end
+Real-time updates are enabled by using Server-Sent Events, so no polling is needed on the frontend.
 
-There is one mistake in this repository, this stack can only serve one user simultaneously because I didn't broadcast the channels.
+There is one mistake in this repository: this stack can only serve one user simultaneously because I didn't broadcast the channels.
 
-Will fix it when I have time.
+I will fix it when I have time.
+
+This repository was coded under AI mentorship. The AI explained the language features and best practices, but it is 95% hand-coded.
