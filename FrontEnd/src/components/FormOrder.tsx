@@ -1,13 +1,18 @@
 import { NumberInput, Paper, Button, Flex, Text } from '@mantine/core'
-import { useState } from 'react'
-import { useOrdersPost, useRobotPatch } from '@/api'
+import { useEffect, useState } from 'react'
+import { useOrdersPost, useRobotPatch, useOrdersGet } from '@/api'
 
 export const FormOrder = () => {
+	const { isSuccess, data, isLoading } = useOrdersGet()
 	const { mutateAsync: mutateAsync_orders, isPending: isPending_orders } =
 		useOrdersPost()
 	const { mutateAsync: mutateAsync_robots, isPending: isPending_robots } =
 		useRobotPatch()
 	const [number, setNumber] = useState(1)
+
+	useEffect(() => {
+		if (isSuccess) setNumber(data.count_robots)
+	}, [isSuccess, data?.count_robots])
 
 	return (
 		<Paper
@@ -31,7 +36,7 @@ export const FormOrder = () => {
 				mt="xs"
 				bg="orange"
 				w="12rem"
-				loading={isPending_robots}
+				loading={isPending_robots || isLoading}
 				onClick={() => {
 					mutateAsync_robots(number)
 				}}
