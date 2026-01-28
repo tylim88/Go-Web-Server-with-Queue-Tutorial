@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,8 +10,6 @@ import (
 type Robots_Patch_Body struct {
 	Count_robots uint8 `json:"count_robots"`
 }
-
-var m3 sync.Mutex
 
 func robots_Patch(c *gin.Context) {
 
@@ -22,12 +20,11 @@ func robots_Patch(c *gin.Context) {
 		return
 	}
 	func() {
-		m3.Lock()
-		defer m3.Unlock()
 		count_robot = body.Count_robots
 		var i uint8 = 1
 		for key, value := range map_processing {
 			if i > body.Count_robots {
+
 				value.func_cancel()
 				var pending_base = Pending_Base{
 					Id_order:    map_processing[key].Id_order,
@@ -44,15 +41,22 @@ func robots_Patch(c *gin.Context) {
 				case "regular":
 					map_pending.Regular = append(map_pending.Regular, pending_base)
 				}
-
+				// to modify struct, struct has to be addressable
+				// but struct in map is not addressable
+				// so take out the struct first
+				temp := map_processing[key]
+				temp.Time_remaining = (10 * time.Second).Milliseconds()
+				map_processing[key] = temp
 				chan_response_processing <- Order_SSE_Response_Processing{
 					Id_robot:   key,
 					Processing: map_processing[key], Queue: "processing", Action: "remove",
 				}
 				delete(map_processing, key)
+				println(1)
 			}
 			i++
 		}
+		enqueue_processing()
 	}()
 
 	c.JSON(http.StatusOK, gin.H{})
