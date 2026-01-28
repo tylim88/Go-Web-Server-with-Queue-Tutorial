@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,8 +10,6 @@ import (
 type Orders_Post_Body struct {
 	Type string `json:"type" binding:"required"`
 }
-
-var m1 sync.Mutex
 
 func orders_Post(c *gin.Context) {
 
@@ -24,31 +21,27 @@ func orders_Post(c *gin.Context) {
 		return
 	}
 
-	func() {
-		m1.Lock()
-		defer m1.Unlock()
+	id_robot_latest++
+	newOrder = Pending_Base{
+		Id_order:    id_robot_latest,
+		Time_create: time.Now(),
+	}
+	switch body.Type {
+	case "vip":
+		map_pending.Vip = append(map_pending.Vip, newOrder)
+	case "regular":
+		map_pending.Regular = append(map_pending.Regular, newOrder)
+	default:
+		c.JSON(400, gin.H{"error": "Invalid type provided!"})
+		return
+	}
 
-		id_robot_latest++
-		newOrder = Pending_Base{
-			Id_order:    id_robot_latest,
-			Time_create: time.Now(),
-		}
-		switch body.Type {
-		case "vip":
-			map_pending.Vip = append(map_pending.Vip, newOrder)
-		case "regular":
-			map_pending.Regular = append(map_pending.Regular, newOrder)
-		default:
-			c.JSON(400, gin.H{"error": "Invalid type provided!"})
-			return
-		}
-		// enqueue_processing()
-	}()
 	chan_response_pending <- Order_SSE_Response_Pending{
 		Pending_Base: newOrder,
 		Type_order:   body.Type,
 		Queue:        "pending",
 		Action:       "add",
 	}
+	enqueue_processing()
 	c.JSON(http.StatusOK, gin.H{})
 }
