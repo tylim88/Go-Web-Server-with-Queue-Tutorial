@@ -59,5 +59,5 @@ var map_processing = map[uint8]Processing{}
 var list_completed = []Completed{}
 
 var id_robot_latest uint64 = 0
-var count_robot uint8 = 1
+var count_robots uint8 = 1
 var time_remaining = 10 * time.Second

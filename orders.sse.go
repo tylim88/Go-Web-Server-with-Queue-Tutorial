@@ -61,7 +61,7 @@ func orders_SSE(c *gin.Context) {
 }
 
 func enqueue_processing() {
-	if len(map_processing) >= int(count_robot) {
+	if len(map_processing) >= int(count_robots) {
 		return
 	}
 	if len(map_pending.Regular) == 0 && len(map_pending.Vip) == 0 {
@@ -69,7 +69,7 @@ func enqueue_processing() {
 	}
 
 	var id_robot uint8
-	for i := uint8(1); i <= count_robot; i++ {
+	for i := uint8(1); i <= count_robots; i++ {
 		if _, ok := map_processing[uint8(i)]; !ok {
 			id_robot = i
 			break

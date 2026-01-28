@@ -10,7 +10,6 @@ export const useOrdersGet = () =>
 		queryKey: [key],
 		queryFn: () => client_api.get('orders').json<InitialData>(),
 		refetchOnWindowFocus: false,
-		retry: false,
 	})
 
 export const useOrderSSE = () =>
@@ -74,6 +73,9 @@ export const useOrderSSE = () =>
 					return old
 				})
 			},
+			onerror(err) {
+				console.error(err)
+			},
 		})
 		return () => {
 			controller.abort()
@@ -103,4 +105,5 @@ type InitialData = {
 	pending: Record<'vip' | 'regular', Pending[]>
 	processing: Record<number, Processing>
 	completed: Completed[]
+	count_robots: number
 }

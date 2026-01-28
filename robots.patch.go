@@ -20,7 +20,7 @@ func robots_Patch(c *gin.Context) {
 		return
 	}
 	func() {
-		count_robot = body.Count_robots
+		count_robots = body.Count_robots
 		var i uint8 = 1
 		for key, value := range map_processing {
 			if i > body.Count_robots {
@@ -32,7 +32,7 @@ func robots_Patch(c *gin.Context) {
 				}
 
 				chan_response_pending <- Order_SSE_Response_Pending{
-					Pending_Base: pending_base, Queue: "pending", Action: "add",
+					Pending_Base: pending_base, Queue: "pending", Action: "add", Type_order: map_processing[key].Type_order,
 				}
 
 				switch map_processing[key].Type_order {
