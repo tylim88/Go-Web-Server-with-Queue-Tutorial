@@ -2,61 +2,23 @@ package main
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Pending struct {
-	Id_order    int       `json:"id_order"`
-	Time_create time.Time `json:"time_create"`
+type Orders_Get_Response struct {
+	Pending        Pending            `json:"pending"`
+	Map_processing map[int]Processing `json:"processing"`
+	Completed      []Completed        `json:"completed"`
 }
 
-type PendingWithType struct {
-	Vip     []Pending `json:"vip"`
-	Regular []Pending `json:"regular"`
-}
-
-type Processing struct {
-	Id_order       int       `json:"id_order"`
-	Id_process     int       `json:"id_process"`
-	Time_create    time.Time `json:"time_create"`
-	Time_process   time.Time `json:"time_process"`
-	Time_remaining time.Time `json:"time_remaining"`
-	Type           string    `json:"type"` // vip / regular
-}
-
-type Completed struct {
-	Id_order      int       `json:"id_order"`
-	Id_robot      int       `json:"id_robot"`
-	Time_create   time.Time `json:"time_create"`
-	Time_process  time.Time `json:"time_process"`
-	Time_complete time.Time `json:"time_complete"`
-	Type          string    `json:"type"` // vip / regular
-}
-
-type OrderGetResponse struct {
-	Pending    PendingWithType    `json:"pending"`
-	Processing map[int]Processing `json:"processing"`
-	Completed  []Completed        `json:"completed"`
-}
-
-var pendingMap = struct {
-	Vip     []Pending `json:"vip"`
-	Regular []Pending `json:"regular"`
-}{}
-
-var processingMap = map[int]Processing{}
-
-var completedList = []Completed{}
-
-func ordersGet() {
+func orders_Get() {
 
 	r.GET("/orders", func(c *gin.Context) {
-		c.JSON(http.StatusOK, OrderGetResponse{
-			Pending:    pendingMap,
-			Processing: processingMap,
-			Completed:  completedList,
+		c.JSON(http.StatusOK, Orders_Get_Response{
+			Pending:        map_pending,
+			Map_processing: map_processing,
+			Completed:      list_completed,
 		})
 	})
 }

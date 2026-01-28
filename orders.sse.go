@@ -1,35 +1,35 @@
 package main
 
 import (
+	"context"
 	"io"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-var pendingChan = make(chan PendingResponse)
-var processingChan = make(chan ProcessingResponse)
-var completedChan = make(chan CompletedResponse)
+var m sync.Mutex
 
-type PendingResponse struct {
-	Pending
-	Type   string `json:"type"`   // vip / regular
-	Queue  string `json:"queue"`  // pending
-	Action string `json:"action"` // delete /  add
+type Order_SSE_Response_Pending struct {
+	Pending_Base
+	Type_order string `json:"type"`   // vip / regular
+	Queue      string `json:"queue"`  // pending
+	Action     string `json:"action"` // delete /  add
 }
-
-type ProcessingResponse struct {
+type Order_SSE_Response_Processing struct {
 	Processing
 	Queue  string `json:"queue"`  // processing
 	Action string `json:"action"` // delete /  add
 }
 
-type CompletedResponse struct {
+type Order_SSE_Response_Completed struct {
 	Completed
 	Queue string `json:"queue"` // completed
 }
 
 // https://gist.github.com/SubCoder1/3a700149b2e7bb179a9123c6283030ff
-func ordersSSE() {
+func orders_SSE() {
 
 	r.GET("/ordersSSE", func(c *gin.Context) {
 		c.Writer.Header().Set("Content-Type", "text/event-stream")
@@ -40,22 +40,26 @@ func ordersSSE() {
 		c.Stream(func(w io.Writer) bool {
 
 			select {
-			case pendingItem, ok := <-pendingChan:
+			case pendingItem, ok := <-chan_response_pending:
 				if ok {
 					c.SSEvent("pending", pendingItem)
+					if pendingItem.Action == "add" {
+						enqueue_processing()
+					}
 
 					return true
 				}
 				return false
-			case processingItem, ok := <-processingChan:
+			case processingItem, ok := <-chan_response_processing:
 				if ok {
 					c.SSEvent("pending", processingItem)
 					return true
 				}
 				return false
-			case completed, ok := <-completedChan:
+			case completed, ok := <-chan_response_completed:
 				if ok {
 					c.SSEvent("pending", completed)
+					enqueue_processing()
 					return true
 				}
 				return false
@@ -69,22 +73,98 @@ func ordersSSE() {
 }
 
 func enqueue_processing() {
-	if count_robot >= len(processingMap) {
+	if count_robot >= len(map_processing) {
 		return
 	}
-	if len(pendingMap.Regular) == 0 && len(pendingMap.Vip) == 0 {
+	if len(map_pending.Regular) == 0 && len(map_pending.Vip) == 0 {
 		return
 	}
+
+	m.Lock()
+	defer m.Unlock()
+
 	var id_robot int
 	for i := 1; i <= count_robot; i++ {
-		if _, ok := processingMap[i]; !ok {
+		if _, ok := map_processing[i]; !ok {
 			id_robot = i
 			break
 		}
 	}
-	go func(){
-		
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	var id_order int
+	var time_create time.Time
+	var type_order string
+	time_process := time.Now()
+
+	if len(map_pending.Vip) > 0 {
+		id_order = map_pending.Vip[0].Id_order
+		time_create = map_pending.Vip[0].Time_create
+		type_order = "vip"
+		map_pending.Vip = map_pending.Vip[1:]
+	} else {
+		id_order = map_pending.Regular[0].Id_order
+		time_create = map_pending.Regular[0].Time_create
+		type_order = "regular"
+		map_pending.Regular = map_pending.Regular[1:]
 	}
-	const time_remaining = 1e4
+	chan_response_pending <- Order_SSE_Response_Pending{
+		Pending_Base: Pending_Base{
+			Id_order:    id_order,
+			Time_create: time_create,
+		},
+		Type_order: type_order,
+		Queue:      "pending",
+		Action:     "remove",
+	}
+	go func() {
+		defer cancel()
+		<-ctx.Done()
+
+		if ctx.Err() == context.DeadlineExceeded { // if timeout
+			var completed = Completed{
+				Id_order:      id_order,
+				Id_robot:      id_robot,
+				Time_create:   time_create,
+				Time_process:  time_process,
+				Time_complete: time.Now(),
+				Type_order:    type_order,
+			}
+			chan_response_completed <- Order_SSE_Response_Completed{
+				Queue:     "completed",
+				Completed: completed,
+			}
+			list_completed = append([]Completed{completed}, list_completed...)
+
+			chan_response_processing <- Order_SSE_Response_Processing{
+				Processing: Processing{
+					Id_order:       id_order,
+					Time_create:    time_create,
+					Time_process:   time_process,
+					Time_remaining: time_remaining.Microseconds(),
+					Type_order:     type_order,
+				},
+				Queue:  "processing",
+				Action: "remove",
+			}
+
+		}
+
+	}()
+
+	map_processing[id_robot] = Processing{
+		func_cancel:    cancel,
+		Id_order:       id_order,
+		Time_create:    time_create,
+		Time_process:   time_process,
+		Time_remaining: time_remaining.Milliseconds(),
+		Type_order:     type_order,
+	}
+
+	chan_response_processing <- Order_SSE_Response_Processing{
+		Processing: map_processing[id_robot],
+		Queue:      "processing",
+		Action:     "add",
+	}
 
 }

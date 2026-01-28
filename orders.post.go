@@ -8,18 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ordersPostBody struct {
+type Orders_Post_Body struct {
 	Type string `json:"type" binding:"required"`
 }
 
-var id_robot_latest = 0
 var mu sync.Mutex
 
-func ordersPost() {
+func orders_Post() {
 
 	r.POST("/order", func(c *gin.Context) {
-		var body ordersPostBody
-		var newOrder Pending
+		var body Orders_Post_Body
+		var newOrder Pending_Base
 
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(400, gin.H{"error": "Invalid JSON provided!"})
@@ -31,26 +30,26 @@ func ordersPost() {
 			defer mu.Unlock()
 
 			id_robot_latest++
-			newOrder = Pending{
+			newOrder = Pending_Base{
 				Id_order:    id_robot_latest,
 				Time_create: time.Now(),
 			}
 			switch body.Type {
 			case "vip":
-				pendingMap.Vip = append(pendingMap.Vip, newOrder)
+				map_pending.Vip = append(map_pending.Vip, newOrder)
 			case "regular":
-				pendingMap.Regular = append(pendingMap.Regular, newOrder)
+				map_pending.Regular = append(map_pending.Regular, newOrder)
 			default:
 				c.JSON(400, gin.H{"error": "Invalid type provided!"})
 				return
 			}
 		}()
 
-		pendingChan <- PendingResponse{
-			Pending: newOrder,
-			Type:    body.Type,
-			Queue:   "pending",
-			Action:  "add",
+		chan_response_pending <- Order_SSE_Response_Pending{
+			Pending_Base: newOrder,
+			Type_order:   body.Type,
+			Queue:        "pending",
+			Action:       "add",
 		}
 
 		c.JSON(http.StatusOK, gin.H{})

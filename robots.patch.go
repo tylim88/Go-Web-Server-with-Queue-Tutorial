@@ -6,16 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RobotPatchBody struct {
+type Robots_Patch_Body struct {
 	Number uint8 `json:"number" binding:"required"`
 }
 
-var count_robot = 1
-
-func robotsPatch() {
+func robots_Patch() {
 
 	r.PATCH("/robots", func(c *gin.Context) {
-		var body RobotPatchBody
+		var body Robots_Patch_Body
 
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(400, gin.H{"error": "Invalid JSON provided!"})
