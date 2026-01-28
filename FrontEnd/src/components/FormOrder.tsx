@@ -1,10 +1,14 @@
-import { useStoreQueue } from '@/stores'
 import { NumberInput, Paper, Button, Flex, Text } from '@mantine/core'
 import { useState } from 'react'
+import { useOrdersPost, useRobotPatch } from '@/api'
 
 export const FormOrder = () => {
-	const number_initial = useStoreQueue(state => state.count_robot)
-	const [number, setNumber] = useState(number_initial)
+	const { mutateAsync: mutateAsync_orders, isPending: isPending_orders } =
+		useOrdersPost()
+	const { mutateAsync: mutateAsync_robots, isPending: isPending_robots } =
+		useRobotPatch()
+	const [number, setNumber] = useState(1)
+
 	return (
 		<Paper
 			px="md"
@@ -27,8 +31,9 @@ export const FormOrder = () => {
 				mt="xs"
 				bg="orange"
 				w="12rem"
+				loading={isPending_robots}
 				onClick={() => {
-					useStoreQueue.getState().modify_count_robot(number)
+					mutateAsync_robots(number)
 				}}
 			>
 				Update
@@ -41,8 +46,9 @@ export const FormOrder = () => {
 			>
 				<Button
 					w="8rem"
+					loading={isPending_orders}
 					onClick={() => {
-						useStoreQueue.getState().enqueue_pending('regular')
+						mutateAsync_orders('regular')
 					}}
 				>
 					Regular Order
@@ -50,8 +56,9 @@ export const FormOrder = () => {
 				<Button
 					w="8rem"
 					bg="green"
+					loading={isPending_orders}
 					onClick={() => {
-						useStoreQueue.getState().enqueue_pending('vip')
+						mutateAsync_orders('vip')
 					}}
 				>
 					Vip Order

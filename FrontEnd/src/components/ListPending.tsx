@@ -1,8 +1,9 @@
-import { useStoreQueue } from '@/stores'
 import { ScrollArea, Paper, Text, Stack } from '@mantine/core'
+import { useOrdersGet } from '@/api'
+import { Loader } from '@mantine/core'
 
 export const ListPending = () => {
-	const pending = useStoreQueue(state => state.pending)
+	const { isSuccess, data, isLoading } = useOrdersGet()
 
 	return (
 		<Paper display="flex">
@@ -13,13 +14,18 @@ export const ListPending = () => {
 							{type}
 						</Text>
 						<ScrollArea h={400} w={160}>
-							{pending[type].map(({ id_order }) => {
-								return (
-									<Text key={id_order} ta="center">
-										{id_order.toString().padStart(4, '0')}
-									</Text>
-								)
-							})}
+							{isLoading ? (
+								<Loader />
+							) : (
+								isSuccess &&
+								data.pending[type].map(({ id_order }) => {
+									return (
+										<Text key={id_order} ta="center">
+											{id_order.toString().padStart(4, '0')}
+										</Text>
+									)
+								})
+							)}
 						</ScrollArea>
 					</Stack>
 				)

@@ -8,7 +8,7 @@ import (
 )
 
 type Robots_Patch_Body struct {
-	Number uint8 `json:"number" binding:"required"`
+	Count_robots uint8 `json:"count_robots" binding:"required"`
 }
 
 var m3 sync.Mutex
@@ -27,7 +27,7 @@ func robots_Patch(c *gin.Context) {
 		count_robot++
 		var i uint8 = 1
 		for key, value := range map_processing {
-			if i > body.Number {
+			if i > body.Count_robots {
 				value.func_cancel()
 				var pending_base = Pending_Base{
 					Id_order:    map_processing[key].Id_order,
