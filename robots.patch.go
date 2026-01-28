@@ -52,7 +52,6 @@ func robots_Patch(c *gin.Context) {
 					Processing: map_processing[key], Queue: "processing", Action: "remove",
 				}
 				delete(map_processing, key)
-				println(1)
 			}
 			i++
 		}
