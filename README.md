@@ -11,9 +11,10 @@ npm run dev
 ```
 
 original question: https://github.com/tylim88/se-take-home-assignment
+
 my original frontend only solution: https://github.com/feedmepos/se-take-home-assignment/pull/69
 
-This repository is my journey of learning Go
+This repository is part of my journey in learning Go
 
 The original question ask for frontend OR backend solution, this repository provides frontend AND backend solution
 
