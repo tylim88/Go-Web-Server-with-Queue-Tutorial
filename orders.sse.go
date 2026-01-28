@@ -3,13 +3,10 @@ package main
 import (
 	"context"
 	"io"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
-
-var m2 sync.Mutex
 
 type Order_SSE_Response_Pending struct {
 	Pending_Base
@@ -64,15 +61,12 @@ func orders_SSE(c *gin.Context) {
 }
 
 func enqueue_processing() {
-	if count_robot >= uint8(len(map_processing)) {
+	if len(map_processing) >= int(count_robot) {
 		return
 	}
 	if len(map_pending.Regular) == 0 && len(map_pending.Vip) == 0 {
 		return
 	}
-
-	m2.Lock()
-	defer m2.Unlock()
 
 	var id_robot uint8
 	for i := uint8(1); i <= count_robot; i++ {
@@ -163,5 +157,5 @@ func enqueue_processing() {
 		Queue:      "processing",
 		Action:     "add",
 	}
-
+	enqueue_processing()
 }
