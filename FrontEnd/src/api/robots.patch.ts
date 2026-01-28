@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { client } from './__utils'
+import { client_api } from './__utils'
 
 export const useRobotPatch = () =>
 	useMutation({
 		mutationFn: (count_robots: number) =>
-			client.patch('robots', {
+			client_api.patch('robots', {
 				json: { count_robots },
 			}),
 	})

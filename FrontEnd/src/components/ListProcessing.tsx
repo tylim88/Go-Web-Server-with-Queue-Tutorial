@@ -16,13 +16,14 @@ export const ListProcessing = () => {
 		}
 	}, [])
 
-	return (
-		<SimpleGrid cols={{ base: 2, md: 4 }} mt="xl">
-			{isLoading ? (
-				<Loader />
-			) : (
-				isSuccess &&
-				Object.entries(data.processing).map(
+	return isLoading ? (
+		<Flex justify="center" mt="xl">
+			<Loader />
+		</Flex>
+	) : (
+		isSuccess && (
+			<SimpleGrid cols={{ base: 2, md: 4 }} mt="xl">
+				{Object.entries(data.processing).map(
 					([id_robot, { id_order, time_process, time_remaining, type }]) => {
 						return (
 							<Paper key={id_order} w={180} p="md">
@@ -57,8 +58,8 @@ export const ListProcessing = () => {
 							</Paper>
 						)
 					},
-				)
-			)}
-		</SimpleGrid>
+				)}
+			</SimpleGrid>
+		)
 	)
 }

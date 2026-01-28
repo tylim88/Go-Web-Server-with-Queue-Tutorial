@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { client } from './__utils'
+import { client_api } from './__utils'
 
 export const useOrdersPost = () =>
 	useMutation({
 		mutationFn: (type: 'vip' | 'regular') =>
-			client.post('orders', {
+			client_api.post('orders', {
 				json: { type },
 			}),
 	})

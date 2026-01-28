@@ -1,4 +1,4 @@
-import { ScrollArea, Paper, Text, Stack } from '@mantine/core'
+import { ScrollArea, Paper, Text, Stack, Flex } from '@mantine/core'
 import { useOrdersGet } from '@/api'
 import { Loader } from '@mantine/core'
 
@@ -15,7 +15,9 @@ export const ListPending = () => {
 						</Text>
 						<ScrollArea h={400} w={160}>
 							{isLoading ? (
-								<Loader />
+								<Flex justify="center">
+									<Loader />
+								</Flex>
 							) : (
 								isSuccess &&
 								data.pending[type].map(({ id_order }) => {

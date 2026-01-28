@@ -4,18 +4,19 @@ import (
 	"context"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 var r = gin.Default()
 
 func main() {
+	r.Use(cors.Default())
 	r.POST("/orders", orders_Post)
 	r.PATCH("/robots", robots_Patch)
-	r.GET("/orders", orders_get)
-
-	r.Run()
-
+	r.GET("/orders", orders_Get)
+	r.GET("/ordersSSE", orders_SSE)
+	r.Run("127.0.0.1:8080")
 }
 
 type Pending_Base struct {
@@ -50,7 +51,10 @@ var chan_response_pending = make(chan Order_SSE_Response_Pending)
 var chan_response_processing = make(chan Order_SSE_Response_Processing)
 var chan_response_completed = make(chan Order_SSE_Response_Completed)
 
-var map_pending = Pending{}
+var map_pending = Pending{
+	Vip:     []Pending_Base{}, // have to set, else nil because default of slice is nil
+	Regular: []Pending_Base{},
+}
 var map_processing = map[int]Processing{}
 var list_completed = []Completed{}
 

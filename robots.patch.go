@@ -46,6 +46,7 @@ func robots_Patch(c *gin.Context) {
 				}
 
 				chan_response_processing <- Order_SSE_Response_Processing{
+					Id_robot:   key,
 					Processing: map_processing[key], Queue: "processing", Action: "remove",
 				}
 				delete(map_processing, key)
