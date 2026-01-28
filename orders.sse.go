@@ -19,7 +19,7 @@ type Order_SSE_Response_Pending struct {
 }
 type Order_SSE_Response_Processing struct {
 	Processing
-	Id_robot int    `json:"id_robot"`
+	Id_robot uint8  `json:"id_robot"`
 	Queue    string `json:"queue"`  // processing
 	Action   string `json:"action"` // remove /  add
 }
@@ -67,7 +67,7 @@ func orders_SSE(c *gin.Context) {
 }
 
 func enqueue_processing() {
-	if count_robot >= len(map_processing) {
+	if count_robot >= uint8(len(map_processing)) {
 		return
 	}
 	if len(map_pending.Regular) == 0 && len(map_pending.Vip) == 0 {
@@ -77,16 +77,16 @@ func enqueue_processing() {
 	m2.Lock()
 	defer m2.Unlock()
 
-	var id_robot int
-	for i := 1; i <= count_robot; i++ {
-		if _, ok := map_processing[i]; !ok {
+	var id_robot uint8
+	for i := uint8(1); i <= count_robot; i++ {
+		if _, ok := map_processing[uint8(i)]; !ok {
 			id_robot = i
 			break
 		}
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
-	var id_order int
+	var id_order uint64
 	var time_create time.Time
 	var type_order string
 	time_process := time.Now()

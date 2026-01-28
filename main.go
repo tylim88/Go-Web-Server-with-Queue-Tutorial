@@ -20,7 +20,7 @@ func main() {
 }
 
 type Pending_Base struct {
-	Id_order    int       `json:"id_order"`
+	Id_order    uint64    `json:"id_order"`
 	Time_create time.Time `json:"time_create"`
 }
 
@@ -30,7 +30,7 @@ type Pending struct {
 }
 
 type Processing struct {
-	Id_order       int       `json:"id_order"`
+	Id_order       uint64    `json:"id_order"`
 	Time_create    time.Time `json:"time_create"`
 	Time_process   time.Time `json:"time_process"`
 	Time_remaining int64     `json:"time_remaining"`
@@ -39,8 +39,8 @@ type Processing struct {
 }
 
 type Completed struct {
-	Id_order      int       `json:"id_order"`
-	Id_robot      int       `json:"id_robot"`
+	Id_order      uint64    `json:"id_order"`
+	Id_robot      uint8     `json:"id_robot"`
 	Time_create   time.Time `json:"time_create"`
 	Time_process  time.Time `json:"time_process"`
 	Time_complete time.Time `json:"time_complete"`
@@ -55,9 +55,9 @@ var map_pending = Pending{
 	Vip:     []Pending_Base{}, // have to set, else nil because default of slice is nil
 	Regular: []Pending_Base{},
 }
-var map_processing = map[int]Processing{}
+var map_processing = map[uint8]Processing{}
 var list_completed = []Completed{}
 
-var id_robot_latest = 0
-var count_robot = 1
+var id_robot_latest uint64 = 0
+var count_robot uint8 = 1
 var time_remaining = 10 * time.Second

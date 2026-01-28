@@ -7,9 +7,9 @@ import (
 )
 
 type Orders_Get_Response struct {
-	Pending        Pending            `json:"pending"`
-	Map_processing map[int]Processing `json:"processing"`
-	Completed      []Completed        `json:"completed"`
+	Pending        Pending              `json:"pending"`
+	Map_processing map[uint8]Processing `json:"processing"`
+	Completed      []Completed          `json:"completed"`
 }
 
 func orders_Get(c *gin.Context) {
