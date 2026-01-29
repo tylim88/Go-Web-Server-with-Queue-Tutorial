@@ -31,7 +31,7 @@ func robots_Patch(c *gin.Context) {
 					Time_create: map_processing[key].Time_create,
 				}
 
-				chan_response_pending <- Order_SSE_Response_Pending{
+				chan_response <- Order_SSE_Response_Pending{
 					Pending_Base: pending_base, Queue: "pending", Action: "add", Type_order: map_processing[key].Type_order,
 				}
 
@@ -47,7 +47,7 @@ func robots_Patch(c *gin.Context) {
 				temp := map_processing[key]
 				temp.Time_remaining = (10 * time.Second).Milliseconds()
 				map_processing[key] = temp
-				chan_response_processing <- Order_SSE_Response_Processing{
+				chan_response <- Order_SSE_Response_Processing{
 					Id_robot:   key,
 					Processing: map_processing[key], Queue: "processing", Action: "remove",
 				}

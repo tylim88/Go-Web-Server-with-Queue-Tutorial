@@ -47,9 +47,7 @@ type Completed struct {
 	Type_order    string    `json:"type"` // vip / regular
 }
 
-var chan_response_pending = make(chan Order_SSE_Response_Pending)
-var chan_response_processing = make(chan Order_SSE_Response_Processing)
-var chan_response_completed = make(chan Order_SSE_Response_Completed)
+var chan_response = make(chan any)
 
 var map_pending = Pending{
 	Vip:     []Pending_Base{}, // have to set, else nil because default of slice is nil

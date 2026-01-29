@@ -34,21 +34,9 @@ func orders_SSE(c *gin.Context) {
 	c.Writer.Header().Set("Connection", "keep-alive")
 	c.Stream(func(w io.Writer) bool {
 		select {
-		case pendingItem, ok := <-chan_response_pending:
+		case item, ok := <-chan_response:
 			if ok {
-				c.SSEvent("pending", pendingItem)
-				return true
-			}
-			return false
-		case processingItem, ok := <-chan_response_processing:
-			if ok {
-				c.SSEvent("processing", processingItem)
-				return true
-			}
-			return false
-		case completed, ok := <-chan_response_completed:
-			if ok {
-				c.SSEvent("completed", completed)
+				c.SSEvent("pending", item)
 				return true
 			}
 			return false
@@ -93,7 +81,7 @@ func enqueue_processing() {
 		type_order = "regular"
 		map_pending.Regular = map_pending.Regular[1:]
 	}
-	chan_response_pending <- Order_SSE_Response_Pending{
+	chan_response <- Order_SSE_Response_Pending{
 		Pending_Base: Pending_Base{
 			Id_order:    id_order,
 			Time_create: time_create,
@@ -115,13 +103,13 @@ func enqueue_processing() {
 				Time_complete: time.Now(),
 				Type_order:    type_order,
 			}
-			chan_response_completed <- Order_SSE_Response_Completed{
+			chan_response <- Order_SSE_Response_Completed{
 				Queue:     "completed",
 				Completed: completed,
 			}
 			list_completed = append([]Completed{completed}, list_completed...)
 
-			chan_response_processing <- Order_SSE_Response_Processing{
+			chan_response <- Order_SSE_Response_Processing{
 				Processing: Processing{
 					Id_order:       id_order,
 					Time_create:    time_create,
@@ -151,7 +139,7 @@ func enqueue_processing() {
 		Type_order:     type_order,
 	}
 
-	chan_response_processing <- Order_SSE_Response_Processing{
+	chan_response <- Order_SSE_Response_Processing{
 		Processing: map_processing[id_robot],
 		Id_robot:   id_robot,
 		Queue:      "processing",
