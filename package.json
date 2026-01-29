@@ -3,9 +3,8 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"dev": "npm-run-all -p backend frontend",
-		"backend": "go run .",
-		"frontend": "cd FrontEnd && npm run dev",
+		"back": "go run .",
+		"front": "cd FrontEnd && npm run dev",
 		"setup": "rm -rf node_modules && npm i && go mod download && cd FrontEnd && rm -rf node_modules && npm i"
 	},
 	"repository": {
