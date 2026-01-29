@@ -4,10 +4,16 @@ to setup
 npm run setup
 ```
 
-to run (for some reasons, you might need to rerun again to make it work, basically run -> stop -> run)
+to run 
 
 ```bash
-npm run dev
+npm run back
+```
+
+then open a new terminal
+
+```bash
+npm run front
 ```
 
 The original question: https://github.com/tylim88/se-take-home-assignment
