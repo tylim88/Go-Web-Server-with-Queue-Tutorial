@@ -36,7 +36,7 @@ func orders_SSE(c *gin.Context) {
 		select {
 		case item, ok := <-chan_response:
 			if ok {
-				c.SSEvent("pending", item)
+				c.SSEvent("queue", item)
 				return true
 			}
 			return false
