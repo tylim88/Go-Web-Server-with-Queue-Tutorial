@@ -4,7 +4,7 @@ to setup
 npm run setup
 ```
 
-to run (for some reason, you might want to rerun again to make it work, basically run -> stop -> run)
+to run (for some reasons, you might need to rerun again to make it work, basically run -> stop -> run)
 
 ```bash
 npm run dev
