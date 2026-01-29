@@ -2,10 +2,13 @@ package main
 
 import (
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+var m1 sync.Mutex
 
 type Robots_Patch_Body struct {
 	Count_robots uint8 `json:"count_robots"`
@@ -20,8 +23,12 @@ func robots_Patch(c *gin.Context) {
 		return
 	}
 	func() {
+		m1.Lock()
+		defer m1.Unlock()
 		count_robots = body.Count_robots
 		var i uint8 = 1
+		// will not in order because go purposely randomize map order
+		// this cause the order will not queue back in incremental order
 		for key, value := range map_processing {
 			if i > body.Count_robots {
 

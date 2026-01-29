@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -48,7 +49,10 @@ func orders_SSE(c *gin.Context) {
 
 }
 
-func enqueue_processing() {
+var m3 sync.Mutex
+
+func enqueue_internal() {
+
 	if len(map_processing) >= int(count_robots) {
 		return
 	}
@@ -95,6 +99,8 @@ func enqueue_processing() {
 		<-ctx.Done()
 
 		if ctx.Err() == context.DeadlineExceeded { // if timeout
+			m3.Lock()
+			defer m3.Unlock()
 			var completed = Completed{
 				Id_order:      id_order,
 				Id_robot:      id_robot,
@@ -124,7 +130,7 @@ func enqueue_processing() {
 
 			delete(map_processing, id_robot)
 
-			enqueue_processing()
+			enqueue_internal()
 
 		}
 
@@ -145,5 +151,12 @@ func enqueue_processing() {
 		Queue:      "processing",
 		Action:     "add",
 	}
-	enqueue_processing()
+	enqueue_internal()
+}
+
+func enqueue_processing() {
+	m3.Lock()
+	defer m3.Unlock()
+	enqueue_internal()
+
 }
