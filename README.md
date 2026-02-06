@@ -35,3 +35,7 @@ There is one mistake in this repository: this stack can only serve one user simu
 I will fix it when I have time.
 
 This repository was coded under AI mentorship. The AI explained the language features and best practices, but it is 95% hand-coded.
+
+## Video Demo
+
+[![video demo](https://img.youtube.com/vi/ORCfP3-Seeo/maxresdefault.jpg)](https://youtu.be/ORCfP3-Seeo)
